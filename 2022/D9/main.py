@@ -12,7 +12,6 @@ class Day9:
         self.head_visited = []
         self.tail_visited = []
 
-    @property
     def is_tail_touching(self) -> bool:
         if self.head[0] in [
             self.tail[0] - 1, self.tail[0], self.tail[0] + 1
@@ -23,7 +22,7 @@ class Day9:
         return False
 
     def move_tail(self, last=False):
-        if not self.is_tail_touching or last:
+        if not self.is_tail_touching() or last:
             self.tail_visited.append((self.tail[0], self.tail[1]))
 
             self.tail[0] = self.head_visited[-1][0]
