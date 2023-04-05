@@ -1,12 +1,12 @@
-def get_my_input():
-    return open('input', 'r').read().splitlines()
-
-
 class Day6:
 
     def __init__(self):
         self.sidx = 0
         self.eidx = 4
+
+    @staticmethod
+    def get_my_input():
+        return open('input', 'r').read().splitlines()
 
     def has_duplicate(self, string: str):
         if len(set(string)) != 4:
@@ -16,10 +16,15 @@ class Day6:
         return False
 
     def main(self):
-        line = get_my_input()[0]
+        line = self.get_my_input()[0]
 
-        print([(self.eidx, line[self.sidx:self.eidx]) for _ in line
-               if not self.has_duplicate(line[self.sidx:self.eidx])][0][0])
+        print(
+            [
+                (self.eidx, line[self.sidx:self.eidx])
+                for _ in line
+                if not self.has_duplicate(line[self.sidx:self.eidx])
+            ][0][0]
+        )
 
 
 if __name__ == '__main__':

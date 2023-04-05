@@ -1,3 +1,6 @@
+from collections import defaultdict
+
+
 def get_inputs():
     with open('input', 'r') as f:
         return f.read().splitlines()
@@ -6,50 +9,62 @@ def get_inputs():
 class Day9:
 
     def __init__(self):
-        self.head = [0, 0]
-        self.tail = [0, 0]
+        self.rope = [
+            [0, 0],  # head
+            [0, 0],  # tail-1
+            [0, 0],  # tail-2
+            [0, 0],  # tail-3
+            [0, 0],  # tail-4
+            [0, 0],  # tail-5
+            [0, 0],  # tail-6
+            [0, 0],  # tail-7
+            [0, 0],  # tail-8
+            [0, 0],  # tail-9
+        ]
 
-        self.head_visited = []
-        self.tail_visited = []
+        self.visited = defaultdict(list)
 
-    def is_tail_touching(self) -> bool:
-        if self.head[0] in [
-            self.tail[0] - 1, self.tail[0], self.tail[0] + 1
-        ] and self.head[1] in [
-            self.tail[1] - 1, self.tail[1], self.tail[1] + 1
+    @staticmethod
+    def is_tail_touching(head, tail) -> bool:
+        if head[0] in [
+            tail[0] - 1, tail[0], tail[0] + 1
+        ] and head[1] in [
+            tail[1] - 1, tail[1], tail[1] + 1
         ]:
             return True
         return False
 
     def move_tail(self, last=False):
-        if not self.is_tail_touching() or last:
-            self.tail_visited.append((self.tail[0], self.tail[1]))
+        for idx, node in enumerate(self.rope[1:], start=1):
+            head = 'head' if idx == 1 else f'tail-{idx - 1}'
+            tail = f'tail-{idx}'
 
-            self.tail[0] = self.head_visited[-1][0]
-            self.tail[1] = self.head_visited[-1][1]
+            if not self.is_tail_touching(self.rope[idx - 1], node) or last:
+                self.visited[tail].append((node[0], node[1]))
+                self.rope[idx] = self.visited[head][-1]
 
     def move_u(self, step: int):
         for _ in range(step):
-            self.head_visited.append((self.head[0], self.head[1]))
-            self.head[1] += 1
+            self.visited['head'].append((self.rope[0][0], self.rope[0][1]))
+            self.rope[0][1] += 1
             self.move_tail()
 
     def move_r(self, step: int):
         for _ in range(step):
-            self.head_visited.append((self.head[0], self.head[1]))
-            self.head[0] += 1
+            self.visited['head'].append((self.rope[0][0], self.rope[0][1]))
+            self.rope[0][0] += 1
             self.move_tail()
 
     def move_d(self, step: int):
         for _ in range(step):
-            self.head_visited.append((self.head[0], self.head[1]))
-            self.head[1] -= 1
+            self.visited['head'].append((self.rope[0][0], self.rope[0][1]))
+            self.rope[0][1] -= 1
             self.move_tail()
 
     def move_l(self, step: int):
         for _ in range(step):
-            self.head_visited.append((self.head[0], self.head[1]))
-            self.head[0] -= 1
+            self.visited['head'].append((self.rope[0][0], self.rope[0][1]))
+            self.rope[0][0] -= 1
             self.move_tail()
 
 
@@ -61,14 +76,13 @@ def main():
         func = day9.__getattribute__(f'move_{direction.lower()}')
         func(int(step))
 
-    day9.head_visited.append((day9.head[0], day9.head[1]))
+    day9.visited['head'].append((day9.rope[0][0], day9.rope[0][1]))
     day9.move_tail(last=True)
 
-    # print(day9.head_visited)
-    # print(day9.tail_visited)
+    print(day9.visited)
 
-    print(f"Head Visited: {len(set(day9.head_visited))}")
-    print(f"Tail Visited: {len(set(day9.tail_visited))}")
+    print(f"Head Visited: {len(set(day9.visited['head']))}")
+    print(f"Tail Visited: {len(set(day9.visited['tail-9']))}")
 
 
 if __name__ == '__main__':
